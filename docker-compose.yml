@@ -1,68 +1,39 @@
 services:
-
-  dc1:
-    container_name: ${DC_NAME}
-    hostname: ${DC_NAME}
+  samba:
     build:
       context: ./dockerfile
       target: dc
-    restart: unless-stopped
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./config-dc1:/etc/samba/config
-      - ./data-dc1:/var/lib/samba
+    container_name: ${DC_NAME}
+    dns:
+      - ${DC_IP}
+      - ${MAIN_DNS_IP}
+    dns_search:
+      - ${DOMAIN_FQDN}
     environment:
       - DOMAIN_FQDN=${DOMAIN_FQDN}
       - DOMAIN_DN=${DOMAIN_DN}
       - DNSFORWARDER=${MAIN_DNS_IP}
       - DC_IP=${DC_IP}
-    dns_search:
-      - ${DOMAIN_FQDN}
-    dns:
-      - ${DC_IP}
-      - ${MAIN_DNS_IP}
     extra_hosts:
       - ${DC_NAME}.${DOMAIN_FQDN}:${DC_IP}
-    privileged: true                                  # Run as true root. Required on a DC because the vfs_acl_xattr module is enabled automatically, which uses the security.* namespace (see https://www.samba.org/samba/docs/current/man-html/vfs_acl_xattr.8.html).
+      - ${DC2_NAME}:${DC2_IP}
+      - ${DC2_NAME}.${DOMAIN_FQDN}:${DC2_IP}
+      - ${DC3_NAME}:${DC3_IP}
+      - ${DC3_NAME}.${DOMAIN_FQDN}:${DC3_IP}
+    hostname: ${DC_NAME}
     networks:
-      sambanet:
+      intranet:
         ipv4_address: ${DC_IP}
-
-  fs1:
-    container_name: ${FS_NAME}
-    hostname: ${FS_NAME}
-    build:
-      context: ./dockerfile
-      target: fs
+    privileged: true                                  # Run as true root. Required on a DC because the vfs_acl_xattr module is enabled automatically, which uses the security.* namespace (see https://www.samba.org/samba/docs/current/man-html/vfs_acl_xattr.8.html).
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./config-fs1/kerberos/krb5.conf:/etc/krb5.conf
-      - ./config-fs1/kerberos/krb5.keytab:/etc/krb5.keytab
-      - ./config-fs1/samba:/etc/samba/config
-      - ./config-fs1/supervisor:/etc/supervisor/config:ro
-      - ./data-fs1:/var/lib/samba
-      - ./shares-fs1:/srv/samba
-    environment:
-      - DOMAIN_FQDN=${DOMAIN_FQDN}
-      - DOMAIN_DN=${DOMAIN_DN}
-      - FS_NAME=${FS_NAME}
-      - FS_IP=${FS_IP}
-    dns_search:
-      - ${DOMAIN_FQDN}
-    dns:
-      - ${MAIN_DNS_IP}
-    extra_hosts:
-      - ${FS_NAME}.${DOMAIN_FQDN}:${FS_IP}
-    # privileged: true                                  # Run as true root. Required by Samba because it uses the security.* namespace (see https://www.samba.org/samba/docs/current/man-html/vfs_acl_xattr.8.html).
-    networks:
-      sambanet:
-        ipv4_address: ${FS_IP}
-    depends_on:
-      - dc1
+      - config:/etc/samba/config
+      - data:/var/lib/samba
 
 networks:
-  sambanet:
+  intranet:
+    attachable: true
     driver: macvlan
     driver_opts:
       parent: ${HOST_INTERFACE}
@@ -70,4 +41,10 @@ networks:
       config:
         - subnet: "${SUBNET}"                         # Shared with the host
           gateway: "${GATEWAY}"                       # Same as on the host
-          ip_range: "${CONTAINER_IP_RANGE}"           # Tell Docker which IP addresses are available for containers
+    name: intranet
+
+volumes:
+  config:
+    driver: local
+  data:
+    driver: local
