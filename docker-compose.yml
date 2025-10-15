@@ -20,6 +20,8 @@ services:
       - ${DC2_NAME}.${DOMAIN_FQDN}:${DC2_IP}
       - ${DC3_NAME}:${DC3_IP}
       - ${DC3_NAME}.${DOMAIN_FQDN}:${DC3_IP}
+      - ${DC4_NAME}:${DC4_IP}
+      - ${DC4_NAME}.${DOMAIN_FQDN}:${DC4_IP}
     hostname: ${DC_NAME}
     networks:
       intranet:
