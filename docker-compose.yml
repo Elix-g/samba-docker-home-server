@@ -16,12 +16,12 @@ services:
       - DC_IP=${DC_IP}
     extra_hosts:
       - ${DC_NAME}.${DOMAIN_FQDN}:${DC_IP}
-      - ${DC2_NAME}:${DC2_IP}
-      - ${DC2_NAME}.${DOMAIN_FQDN}:${DC2_IP}
-      - ${DC3_NAME}:${DC3_IP}
-      - ${DC3_NAME}.${DOMAIN_FQDN}:${DC3_IP}
-      - ${DC4_NAME}:${DC4_IP}
-      - ${DC4_NAME}.${DOMAIN_FQDN}:${DC4_IP}
+      - ${DCb_NAME}:${DCb_IP}
+      - ${DCb_NAME}.${DOMAIN_FQDN}:${DCb_IP}
+      - ${DCc_NAME}:${DCc_IP}
+      - ${DCc_NAME}.${DOMAIN_FQDN}:${DCc_IP}
+      - ${DCd_NAME}:${DCd_IP}
+      - ${DCd_NAME}.${DOMAIN_FQDN}:${DCd_IP}
     hostname: ${DC_NAME}
     networks:
       intranet:
