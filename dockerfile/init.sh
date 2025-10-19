@@ -14,6 +14,13 @@ if [ -f "$CONFIG_FILE" ]; then
    # Create a link from the expected config file location to our custom location on the Docker host
    rm -f "$DEFAULT_CONFIG_FILE"
    ln -s "$CONFIG_FILE" "$DEFAULT_CONFIG_FILE"
+
+   # Create a link from the expected chrony config file location to our custom location on the Docker host
+   rm -f "$DEFAULT_CHRONY_CONFIG_FILE"
+   ln -s "$CHRONY_CONFIG_FILE" "$DEFAULT_CHRONY_CONFIG_FILE"
+
+   # Run chrony (non-blocking)
+   exec chrony&
    
    # Run Samba (blocking)
    exec samba --interactive --no-process-group
