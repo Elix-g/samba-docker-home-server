@@ -9,7 +9,7 @@ CONFIG_DIR=/etc/samba/config
 CONFIG_FILE=$CONFIG_DIR/smb.conf
 CHRONY_CONFIG_FILE=$CONFIG_DIR/chrony.conf
 DEFAULT_CONFIG_FILE=/etc/samba/smb.conf
-DEFAULT_CHRONY_CONFIG_FILE=/etc/chrony.con
+DEFAULT_CHRONY_CONFIG_FILE=/etc/chrony.conf
 USERMAP_FILE=$CONFIG_DIR/user.map
 
 KERBEROS_CONFIG_FILE=/etc/krb5.conf
