@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
         dnsutils \
         iproute2 \
         nano \
+        chrony \
         && rm -rf /var/lib/apt/lists/*
 
 # Remove the default smb.conf
